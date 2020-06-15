@@ -1,0 +1,55 @@
+mybatis:
+  mapper-locations: classpath:mapperxml/*.xml
+  type-aliases-package: com.gzhz.kcmqmonitor
+spring:
+
+  #数据库配置
+  datasource:
+    username: mh_dev
+    password: mh_dev12345
+    url: jdbc:mysql://localhost:3308/mh_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT
+    driver-class-name: com.mysql.jdbc.Driver
+  mvc:
+    view:
+      prefix: /
+      suffix: .html
+
+  #配置MQ
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 9081
+
+search:
+  client:
+    type: host
+    port0: 9090
+    port1: 9091
+    url: http://59.215.190.43
+
+
+
+
+
+  #freemarker:
+       #template-loader-path: classpath:/templates/
+       #prefix: /
+       #suffix: .html
+       #是否允许使用request
+       #allow-request-override: true
+       #request-context-attribute: request
+       #cache: false
+       #check-template-location: true
+       #charset: UTF-8
+       #content-type: text/html;charset=UTF-8
+       #expose-request-attributes: false
+       #expose-session-attributes: false
+       #expose-spring-macro-helpers: false
+
+
+
+

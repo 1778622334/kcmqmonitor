@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>购买产品测试</title>
+</head>
+<body>
+<h1>抢购产品测试</h1>
+
+<div class="am-cf">
+    <button type="button" id="shopping" onclick="shopping()" >购买产品</button>
+    <button type="button" id="shopping1" onclick="shopping1()" >抢购产品不加锁</button>
+    <button type="button" id="shopping2" onclick="shopping2()" >悲观锁抢购产品</button>
+    <button type="button" id="shopping3" onclick="shopping3()" >乐观锁抢产品</button>
+</div>
+
+</body>
+
+<script type="text/javascript" src="js/jquery-3.1.1.js"></script>
+
+<script type="text/javascript" >
+    //购买产品
+    function shopping() {
+        var params = {
+            userId : 1,
+            productId : 1,
+            quantity : 3
+        };
+
+        console.log(params)
+        $.ajax({
+            url: 'purchase',
+            data:  JSON.stringify(params),
+            type:'post',
+            contentType:'application/json',
+            success:function (data) {
+                if(typeof (data) == 'string'){
+                    data = JSON.parse(data)
+                }
+                if(data.success){
+                    alert(data.message)
+
+                }else {
+                    alert(data.message)
+                }
+            }
+        });
+        return false;
+    }
+    //抢购产品
+    function shopping1() {
+        for(var i = 0; i < 1000; i++){
+            var params = {
+                userId : 1,
+                productId : 1,
+                quantity : 1
+            };
+            console.log(params)
+            $.ajax({
+                url: 'purchase',
+                data:  JSON.stringify(params),
+                type:'post',
+                contentType:'application/json',
+                success:function (data) {
+                    if(typeof (data) == 'string'){
+                        data = JSON.parse(data)
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+
+
+    //抢购产品悲观锁
+    function shopping2() {
+        for(var i = 0; i<2000; i++){
+            var params = {
+                userId : 1,
+                productId : 1,
+                quantity : 1
+            };
+            console.log(params)
+            $.ajax({
+                url: 'purchaseBeiGuan',
+                data:  JSON.stringify(params),
+                type:'post',
+                contentType:'application/json',
+                success:function (data) {
+                    if(typeof (data) == 'string'){
+                        data = JSON.parse(data)
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    //抢购产品乐观锁
+    function shopping3() {
+        for(var i = 0; i < 3000; i++){
+            var params = {
+                userId : 1,
+                productId : 1,
+                quantity : 2
+            };
+            console.log(params)
+            $.ajax({
+                url: 'purchaseLeGuan',
+                data:  JSON.stringify(params),
+                type:'post',
+                contentType:'application/json',
+                success:function (data) {
+                    if(typeof (data) == 'string'){
+                        data = JSON.parse(data)
+                    }
+                }
+            });
+        }
+
+        return false;
+    }
+    /*$('#dyEmailButton').click(function(){
+
+        var params = {
+            userId : 1,
+            productId : 1,
+            quantuty : 3
+        };
+        $.post("./purchase",params, function (result) {
+            alert(result.message);
+        });
+    });*/
+
+
+
+</script>
+</html>
