@@ -1,6 +1,7 @@
 package com.gzhz.kcmqmonitor.utils;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -88,12 +89,13 @@ public class HttpRequestUtils {
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(35000).setConnectionRequestTimeout(35000).setSocketTimeout(60000).build();
         httpPost.setConfig(requestConfig);
         httpPost.setHeader("Content-type", "application/json; charset=utf-8");
-        httpPost.setHeader("DataEncoding", "UTF-8");
-        httpPost.setHeader("token", token);
+        httpPost.setHeader("Accept", "application/json");
+//        httpPost.setHeader("DataEncoding", "UTF-8");
+        httpPost.setHeader("Authorization", token);
 
         CloseableHttpResponse httpResponse = null;
         try {
-            httpPost.setEntity(new StringEntity(jsonStr));
+            httpPost.setEntity(new StringEntity(jsonStr,Charset.forName("UTF-8")));
             httpResponse = httpClient.execute(httpPost);
             HttpEntity entity = httpResponse.getEntity();
             String result = EntityUtils.toString(entity);
@@ -140,13 +142,14 @@ public class HttpRequestUtils {
         HttpPut httpPut = new HttpPut(url);
         RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(35000).setConnectionRequestTimeout(35000).setSocketTimeout(60000).build();
         httpPut.setConfig(requestConfig);
-        httpPut.setHeader("Content-type", "application/json");
-        httpPut.setHeader("DataEncoding", "UTF-8");
-        httpPut.setHeader("token", token);
+        httpPut.setHeader("Content-type", "application/json; charset=utf-8");
+        httpPut.setHeader("Accept", "application/json");
+//        httpPost.setHeader("DataEncoding", "UTF-8");
+        httpPut.setHeader("Authorization", token);
 
         CloseableHttpResponse httpResponse = null;
         try {
-            httpPut.setEntity(new StringEntity(jsonStr));
+            httpPut.setEntity(new StringEntity(jsonStr,Charset.forName("UTF-8")));
             httpResponse = httpClient.execute(httpPut);
             HttpEntity entity = httpResponse.getEntity();
             String result = EntityUtils.toString(entity);

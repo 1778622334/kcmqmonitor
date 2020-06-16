@@ -1,10 +1,14 @@
 package com.gzhz.kcmqmonitor.vo;
 
+
+
 public class ResultVo {
     private int status;
     private String message;
     private String umeCode;
-    private String result;
+    private String code;
+    private Result result;
+    private String detail;
 
     public int getStatus() {
         return status;
@@ -30,11 +34,38 @@ public class ResultVo {
         this.umeCode = umeCode;
     }
 
-    public String getResult() {
+    public Result getResult() {
         return result;
     }
 
-    public void setResult(String result) {
+    public void setResult(Result result) {
         this.result = result;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDetail() {
+        return detail;
+    }
+
+    public void setDetail(String detail) {
+        this.detail = detail;
+    }
+
+    @Override
+    public String toString() {
+        return "ResultVo{" +
+                "status=" + status +
+                ", message='" + message + '\'' +
+                ", umeCode='" + umeCode + '\'' +
+                ", code='" + code + '\'' +
+                ", result=" + result +
+                '}';
     }
 }

@@ -148,6 +148,7 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                 if(null != publishName && publishName.size() > 0 ){
                     searchModel.setPublishuser(publishName.get(0).getStaffname());
                 }else {
+
                     searchModel.setPublishuser("");
                 }
                 searchModel.setPublishuserid(infoBox.getPublishuser().toString());
@@ -155,7 +156,8 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                 searchModel.setId(infoBox.getId().toString());
                 searchModel.setTitle(infoBox.getTitle());
                 searchModel.setInfo(infoBox.getContent());
-                searchModel.setType(infoBox.getType().byteValue());
+                //模型中type 1表示正常发出， 4已删除的  8草稿箱的  在数据库中用state字段表示
+                searchModel.setType(infoBox.getState().byteValue());
 
                 String s = infoBox.getPublishtime().toString();
                 String publishTime = DateTimeUtils.timeStamp2Date(s,DateTimeUtils.TIME_FORMAT);
