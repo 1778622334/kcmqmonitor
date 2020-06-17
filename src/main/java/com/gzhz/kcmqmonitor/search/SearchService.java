@@ -1,10 +1,13 @@
 package com.gzhz.kcmqmonitor.search;
 
 import com.gzhz.kcmqmonitor.entity.*;
+import com.gzhz.kcmqmonitor.utils.DateTimeUtils;
 import com.gzhz.kcmqmonitor.utils.HttpRequestUtils;
+import com.gzhz.kcmqmonitor.utils.PageHelper;
+import com.gzhz.kcmqmonitor.utils.SelfStringUtils;
 import com.gzhz.kcmqmonitor.vo.ResultVo;
-import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
@@ -63,12 +66,21 @@ public class SearchService {
      * @param id
      * @return
      */
-    public String view (String id){
+    public KcSearchNewModel view (String id){
         String result = HttpRequestUtils.doPost(url+":"+port1+"/v2/api/document/"+id,Bearer,getViewStr());
         System.out.println("查询的的结果："+result);
         JSONObject jsonObject = JSONObject.fromObject(result);
 //        ResultVo vo = (ResultVo)JSONObject.toBean(jsonObject,ResultVo.class);
-        return jsonObject.toString();
+        Map<String,Object> response = ( Map<String,Object>)jsonObject.get("response");
+        KcSearchNewModel kcModel = new KcSearchNewModel();
+        List<Map<String,List>> resultList = ( List<Map<String,List>> )response.get("docs");
+        for (Map<String,List> map: resultList) {
+
+            JSONObject jsonStr = JSONObject.fromObject(map);
+            kcModel = (KcSearchNewModel) JSONObject.toBean(jsonStr,KcSearchNewModel.class);
+
+        }
+        return kcModel;
     }
 
     /**
@@ -79,7 +91,7 @@ public class SearchService {
     public ResultVo updateFiles (UpdateFilesModel model){
         System.out.println("更新时传入的json字符串"+JSONObject.fromObject(model).toString());
         String result = HttpRequestUtils.doPut(url+":"+port0+"/admin/v2/api/index",Bearer,JSONObject.fromObject(model).toString());
-        System.out.println("更新的的结果："+result);
+        System.out.println("新增附件的的结果："+result);
         JSONObject jsonObject = JSONObject.fromObject(result);
         ResultVo vo = (ResultVo)JSONObject.toBean(jsonObject,ResultVo.class);
         return vo;
@@ -93,7 +105,7 @@ public class SearchService {
     public ResultVo removeFiles (RemoveFile removeFile){
         System.out.println("删除附件时传入的json字符串"+JSONObject.fromObject(removeFile).toString());
         String result = HttpRequestUtils.doPost(url+":"+port0+"/admin/v2/api/index/operate",Bearer,JSONObject.fromObject(removeFile).toString());
-        System.out.println("删除的的结果："+result);
+        System.out.println("删除附件的的结果："+result);
         JSONObject jsonObject = JSONObject.fromObject(result);
         ResultVo vo = (ResultVo)JSONObject.toBean(jsonObject,ResultVo.class);
         return vo;
@@ -107,7 +119,7 @@ public class SearchService {
     public ResultVo updateReceiverUser (updateReceiverUserModel model){
         System.out.println("新增接收人时传入的json字符串"+JSONObject.fromObject(model).toString());
         String result = HttpRequestUtils.doPut(url+":"+port0+"/admin/v2/api/index",Bearer,JSONObject.fromObject(model).toString());
-        System.out.println("新增的的结果："+result);
+        System.out.println("新增接收人的的结果："+result);
         JSONObject jsonObject = JSONObject.fromObject(result);
         ResultVo vo = (ResultVo)JSONObject.toBean(jsonObject,ResultVo.class);
         return vo;
@@ -121,38 +133,239 @@ public class SearchService {
         ViewModel model = new ViewModel();
         model.setCollection("kc");
         model.setQueryParam( new QueryParamSelectOne("*:*" ) );
-        model.setReturnParam(new ReturnParam(new String[]{"id","title","info","receiverusers","receiveruserids","files","publishtime","publishuser","favorites","type"},1,0) );
+        model.setReturnParam(new ReturnParam(new String[]{"id","title","info","receiverusers","receiveruserids","files","publishtime","publishuser","publishuserid","favorites","type"},1,0) );
         String jsonStr = JSONObject.fromObject(model).toString();
         System.out.println("jsonStr========="+jsonStr);
         return jsonStr;
     }
 
+
+
     /**
-     * 根据 标题title  内容info  附件名files   接收人名字receiverUsers   发起人名字publishUser
+     * 根据 标题title   附件名files   接收人名字receiverUsers   发起人名字publishUser
+     * 注   内容info 以后考虑
      * @param model
      * @return
      */
-    public String search (SearchModel model){
+    public ResultVo search (SearchBlurryModel model){
+        ResultVo vo = new ResultVo();
         List<KcSearchNewModel> returnList = new ArrayList<>();
-        System.out.println("新增接收人时传入的json字符串"+JSONObject.fromObject(model).toString());
-        String result = HttpRequestUtils.doPost(url+":"+port1+"/v2/api/search",Bearer,JSONObject.fromObject(model).toString());
-        System.out.println("新增的的结果："+result);
-        JSONObject jsonObject = JSONObject.fromObject(result);
-//        ResultVo vo = (ResultVo)JSONObject.toBean(jsonObject,ResultVo.class);
-        Map<String,Object> response = ( Map<String,Object>)jsonObject.get("response");
+        PageHelper pageHelper = new PageHelper();
+        System.out.println("查询时传入的json字符串"+JSONObject.fromObject(model).toString());
+        SearchModel searchModel = null;
+        try {
+            searchModel = dealData(model);
+            System.out.println(JSONObject.fromObject(searchModel).toString());
+            String result = HttpRequestUtils.doPost(url+":"+port1+"/v2/api/search",Bearer,JSONObject.fromObject(searchModel).toString());
+            System.out.println("查询的结果："+result);
+            JSONObject jsonObject = JSONObject.fromObject(result);
+            Map<String,Object> response = ( Map<String,Object>)jsonObject.get("response");
+            int count = (int)response.get("numFound");    //查询到的总数
+            if(count == 0){
+                vo.setStatus(-1);
+                vo.setMessage("查询到的数据数量为0");
+                return vo;
+            }
 
-        List<Map<String,List>> resultList = ( List<Map<String,List>> )response.get("docs");
-        for (Map<String,List> map: resultList) {
-            KcSearchNewModel kcModel = new KcSearchNewModel();
-            Object[] s  = map.get("favorites").toArray();
-            JSONObject jsonStr = JSONObject.fromObject(map);
-            kcModel = (KcSearchNewModel) JSONObject.toBean(jsonStr,KcSearchNewModel.class);
-            returnList.add(kcModel);
+            pageHelper.setCurrentPage(searchModel.getReturnParam().getStart() + 1);
+            pageHelper.setPageSize(searchModel.getReturnParam().getRows());
+            pageHelper.setTotalCount(count);//设置总数量
+            pageHelper.setTotalPage(); //设置总页数
+            List<Map<String,List>> resultList = ( List<Map<String,List>> )response.get("docs");
+            for (Map<String,List> map: resultList) {
+                KcSearchNewModel kcModel = null;
+                JSONObject jsonStr = JSONObject.fromObject(map);
+                kcModel = (KcSearchNewModel) JSONObject.toBean(jsonStr,KcSearchNewModel.class);
+                returnList.add(kcModel);
+            }
+            pageHelper.setResultList(returnList); //设置结果集
+            vo.setPageHelper(pageHelper);
+            vo.setMessage("查询成功");
+            vo.setStatus(0);
+            return vo;
+        }catch (Exception e){
+            e.printStackTrace();
+            vo.setStatus(-1);
+            vo.setMessage("查询出错");
+            return vo;
         }
-        JSONArray jsonObjectList = JSONArray.fromObject(returnList);
-        System.out.println(jsonObjectList.toString());
-        return jsonObjectList.toString();
+//        SearchModel searchModel = new SearchModel();
+//        searchModel.setCollection("kc");
+//        String [] fields = null;
+//        StringBuilder sbd = new StringBuilder("");
+//        if(null != model.getFindType() && model.getFindType().length > 0){
+//            fields = new String [model.getFindType().length];
+//            for (int i = 0; i < fields.length; i++) {
+//                if(model.getFindType()[i] == 1){
+//                    fields[i] = "publishuser";  //发起人
+//                    if(StringUtils.isBlank(sbd.toString())){
+//                        sbd.append("publishuser:*");
+//                    }else {
+//                        sbd.append(" OR publishuser:*");
+//                    }
+//                }else if(model.getFindType()[i] == 2){
+//                    fields[i] = "receiverusers";  //接收人
+//                    if(StringUtils.isBlank(sbd.toString())){
+//                        sbd.append("receiverusers:*");
+//                    }else {
+//                        sbd.append(" OR receiverusers:*");
+//                    }
+//                }else if(model.getFindType()[i] == 4){
+//                    fields[i] = "files";    //附件
+//                    if(StringUtils.isBlank(sbd.toString())){
+//                        sbd.append("files:*");
+//                    }else {
+//                        sbd.append(" OR files:*");
+//                    }
+//                }else {
+//                    fields[i] = "title";    //主题
+//                    if(StringUtils.isBlank(sbd.toString())){
+//                        sbd.append("title:*");
+//                    }else {
+//                        sbd.append(" OR title:*");
+//                    }
+//                }
+//            }
+//        }
+//        if(null != fields && fields.length > 0){
+//            //高亮参数
+//            HighLightParam highLightParam = new HighLightParam();
+//            highLightParam.setField(fields);  //*"info",   后面考虑加不加*//*
+//            searchModel.setHighLightParam(highLightParam);
+//        }else {
+//            searchModel.setHighLightParam(null);
+//        }
+//        //查询参数
+//        QueryParamSearch query = new QueryParamSearch();
+//        if(null != model.getKeyWord() ){
+//            query.setQuery(model.getKeyWord());  //查询关键字
+//        }else {
+//            query.setQuery("*:*");//查询所有
+//        }
+//        String queryrStr = sbd.toString();
+////        String queryrStr = "files:* OR title:* OR receiverusers:* OR publishuser:*";  //*OR info.*   后面考虑要不要搜索内容*//*
+//        String type = "type:1 "; //OR type:4 OR type:8
+////        String queryTime = "publishtime:[2020-06-01T00:00:00Z TO 2020-06-12T05:00:00Z]";
+//        //设置查询时间
+//        if(StringUtils.isNotBlank(model.getStartTime()) && StringUtils.isNotBlank(model.getEndTime())){
+//            String publishTimeStartStr = SelfStringUtils.blankToSpecific(model.getStartTime(),"T");
+//            String publishTimeEndStr = SelfStringUtils.blankToSpecific(model.getEndTime(),"T");
+//            publishTimeStartStr += "Z";
+//            publishTimeEndStr += "Z";
+//            String queryTime = "publishtime:["+publishTimeStartStr+" TO "+publishTimeEndStr+"]";
+//            query.setFilterQuery(new String[]{queryrStr,type,queryTime});
+//            searchModel.setQueryParam(query);
+//        }else {
+//            query.setFilterQuery(new String[]{queryrStr,type});
+//            searchModel.setQueryParam(query);
+//        }
+//
+//        //设置返回的参数
+//        ReturnParam returnParam = new ReturnParam();
+//        returnParam.setField(new String[]{"id","title","info","receiverusers","receiveruserids",
+//                "files","publishtime","publishuser","publishuserid","favorites","type"});
+//        returnParam.setRows(model.getPageSize());
+//        if(model.getCurrentPage() == 0){
+//            returnParam.setStart(0);
+//        }else {
+//            returnParam.setStart(model.getCurrentPage() - 1);
+//        }
+//        searchModel.setReturnParam(returnParam);
 
+    }
+    /**
+     * 封装查询时需要的参数
+     * */
+    public SearchModel dealData(SearchBlurryModel model) throws Exception{
+        try {
+            SearchModel searchModel = new SearchModel();
+            searchModel.setCollection("kc");
+            String [] fields = null;
+            StringBuilder sbd = new StringBuilder("");
+            if(null != model.getFindType() && model.getFindType().length > 0){
+                fields = new String [model.getFindType().length];
+                for (int i = 0; i < fields.length; i++) {
+                    if(model.getFindType()[i] == 1){
+                        fields[i] = "publishuser";  //发起人
+                        if(StringUtils.isBlank(sbd.toString())){
+                            sbd.append("publishuser:"+model.getKeyWord());
+                        }else {
+                            sbd.append(" OR publishuser:"+model.getKeyWord());
+                        }
+                    }else if(model.getFindType()[i] == 2){
+                        fields[i] = "receiverusers";  //接收人
+                        if(StringUtils.isBlank(sbd.toString())){
+                            sbd.append("receiverusers:"+model.getKeyWord());
+                        }else {
+                            sbd.append(" OR receiverusers:"+model.getKeyWord());
+                        }
+                    }else if(model.getFindType()[i] == 4){
+                        fields[i] = "files";    //附件
+                        if(StringUtils.isBlank(sbd.toString())){
+                            sbd.append("files:"+model.getKeyWord());
+                        }else {
+                            sbd.append(" OR files:"+model.getKeyWord());
+                        }
+                    }else {
+                        fields[i] = "title";    //主题
+                        if(StringUtils.isBlank(sbd.toString())){
+                            sbd.append("title:"+model.getKeyWord());
+                        }else {
+                            sbd.append(" OR title:"+model.getKeyWord());
+                        }
+                    }
+                }
+            }
+            if(null != fields && fields.length > 0){
+                //高亮参数
+                HighLightParam highLightParam = new HighLightParam();
+                highLightParam.setField(fields);  //*"info",   后面考虑加不加*//*
+                searchModel.setHighLightParam(highLightParam);
+            }else {
+                searchModel.setHighLightParam(null);
+            }
+            //查询参数
+            QueryParamSearch query = new QueryParamSearch();
+            if(null != model.getKeyWord() ){
+                query.setQuery(model.getKeyWord());  //查询关键字
+            }else {
+                query.setQuery("*:*");//查询所有
+            }
+            String queryrStr = sbd.toString();
+//        String queryrStr = "files:* OR title:* OR receiverusers:* OR publishuser:*";  //*OR info.*   后面考虑要不要搜索内容*//*
+            String type = "type:1 "; //OR type:4 OR type:8
+//        String queryTime = "publishtime:[2020-06-01T00:00:00Z TO 2020-06-12T05:00:00Z]";
+            //设置查询时间
+            if(StringUtils.isNotBlank(model.getStartTime()) && StringUtils.isNotBlank(model.getEndTime())){
+                String publishTimeStartStr = SelfStringUtils.blankToSpecific(model.getStartTime(),"T");
+                String publishTimeEndStr = SelfStringUtils.blankToSpecific(model.getEndTime(),"T");
+                publishTimeStartStr += "Z";
+                publishTimeEndStr += "Z";
+                String queryTime = "publishtime:["+publishTimeStartStr+" TO "+publishTimeEndStr+"]";
+                query.setFilterQuery(new String[]{queryrStr,type,queryTime});
+                searchModel.setQueryParam(query);
+            }else {
+                query.setFilterQuery(new String[]{queryrStr,type});
+                searchModel.setQueryParam(query);
+            }
+
+            //设置返回的参数
+            ReturnParam returnParam = new ReturnParam();
+            returnParam.setField(new String[]{"id","title","info","receiverusers","receiveruserids",
+                    "files","publishtime","publishuser","publishuserid","favorites","type"});
+            returnParam.setRows(model.getPageSize());
+            if(model.getCurrentPage() == 0){
+                returnParam.setStart(0);
+            }else {
+                returnParam.setStart(model.getCurrentPage() - 1);
+            }
+            searchModel.setReturnParam(returnParam);
+
+            return searchModel;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
+        }
     }
 
 }

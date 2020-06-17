@@ -6,13 +6,11 @@ import com.gzhz.kcmqmonitor.model.SearchInfoBoxModel;
 import com.gzhz.kcmqmonitor.model.SearchStaffNoListModel;
 import com.gzhz.kcmqmonitor.services.KcInfoBoxService;
 import com.gzhz.kcmqmonitor.utils.DateTimeUtils;
-import com.gzhz.kcmqmonitor.utils.StringUtils;
-import org.apache.commons.lang.text.StrBuilder;
+import com.gzhz.kcmqmonitor.utils.SelfStringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Service("kcInfoBoxService")
@@ -161,8 +159,8 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
 
                 String s = infoBox.getPublishtime().toString();
                 String publishTime = DateTimeUtils.timeStamp2Date(s,DateTimeUtils.TIME_FORMAT);
-                String publishTimeStr = StringUtils.blankToSpecific(publishTime,"T");
-                publishTimeStr += "Z";
+                String publishTimeStr = SelfStringUtils.blankToSpecific(publishTime,"T");
+//                publishTimeStr += "Z";
                 searchModel.setPublishtime(publishTimeStr);
 
                 searchModels.add(searchModel);

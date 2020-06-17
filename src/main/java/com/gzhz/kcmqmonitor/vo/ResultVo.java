@@ -1,6 +1,9 @@
 package com.gzhz.kcmqmonitor.vo;
 
 
+import com.gzhz.kcmqmonitor.utils.PageHelper;
+
+import java.io.Serializable;
 
 public class ResultVo {
     private int status;
@@ -9,6 +12,7 @@ public class ResultVo {
     private String code;
     private Result result;
     private String detail;
+    private PageHelper pageHelper;
 
     public int getStatus() {
         return status;
@@ -56,6 +60,14 @@ public class ResultVo {
 
     public void setDetail(String detail) {
         this.detail = detail;
+    }
+
+    public PageHelper getPageHelper() {
+        return pageHelper;
+    }
+
+    public void setPageHelper(PageHelper pageHelper) {
+        this.pageHelper = pageHelper;
     }
 
     @Override

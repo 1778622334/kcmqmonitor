@@ -11,9 +11,29 @@ public class MqController {
     @Autowired
     private Sender sender;
 
-    @GetMapping("/sendTopic")
+    /**
+     * 发起快传
+     * @return
+     */
+    @GetMapping("/sendFastPass")
     public Object sendTopic() {
-        sender.sendTopic();
-        return "ok";
+        sender.sendFastPass();
+        return "sendFastPass ： ok";
+    }
+
+    @GetMapping("/addReceiverUser")
+    public Object addReceiverUser() {
+        sender.addReceiverUser();
+        return "addReceiverUser ： ok";
+    }
+    @GetMapping("/addFiles")
+    public Object addFiles() {
+        sender.addFile();
+        return "addFiles : ok";
+    }
+    @GetMapping("/removeFiles")
+    public Object removeFiles() {
+        sender.removeFiles();
+        return "removeFiles : ok";
     }
 }

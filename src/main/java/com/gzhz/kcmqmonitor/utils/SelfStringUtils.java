@@ -1,6 +1,6 @@
 package com.gzhz.kcmqmonitor.utils;
 
-public class StringUtils {
+public class SelfStringUtils {
     /**
      * 将多空格替换为指定字符
      *
