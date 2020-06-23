@@ -3,7 +3,7 @@ package com.gzhz.kcmqmonitor.entity;
 public class Files {
 
     private String id;
-    private String files;
+    private String[] files;
 
     public String getId() {
         return id;
@@ -13,12 +13,11 @@ public class Files {
         this.id = id;
     }
 
-    public String getFiles() {
+    public String[] getFiles() {
         return files;
     }
 
-    public void setFiles(String files) {
+    public void setFiles(String[] files) {
         this.files = files;
     }
-
 }

@@ -194,9 +194,10 @@ public class SearchController {
      * @return
      */
 
-    @RequestMapping("/search")
-    public ResultVo search(@RequestBody SearchBlurryModel model ){
-        ResultVo vo = new ResultVo();
+    @RequestMapping("kc/search")
+    public Map<String,Object> search(@RequestBody SearchBlurryModel model ){
+        Map<String,Object> map = new HashMap<>();
+//        ResultVo vo = new ResultVo();
         /*SearchModel model = new SearchModel();
         model.setCollection("kc");
         //高亮参数
@@ -219,9 +220,9 @@ public class SearchController {
 //        if(){
 //
 //        }
-        vo = searchService.search(model);
+        map = searchService.search(model);
 //        PageHelper pageHelper = new PageHelper();
-        return vo;
+        return map;
     }
 
 }

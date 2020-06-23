@@ -38,4 +38,13 @@ public interface KcInfoBoxMapper {
      * @return
      */
     List<KcInfoBox> selectStaffNoBysessionguid(SearchStaffNoListModel model);
+
+    /**
+     * 通过sessionid查出接收人列表   （不包含发起人自己）
+     * @param sessionid
+     * @return
+     */
+    List<KcInfoBox> selectBySessionid(String sessionid);
+
+    List<KcInfoBox> selectReceiverUserByPrimaryKey(Integer id);
 }

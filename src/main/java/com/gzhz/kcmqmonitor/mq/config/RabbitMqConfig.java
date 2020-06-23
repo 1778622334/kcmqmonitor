@@ -24,14 +24,15 @@ public class RabbitMqConfig {
      * 	7：转发快传
      * @return
      */
-    public static final String INITIATE_A_FAST_PASS = "send.fastPass"; //发起快传
-    public static final String ADD_RECEIVE_USER = "add.receiver";  //邀请参与人
-    public static final String ADD_FILES = "add.files";  //新增附件
-    public static final String REMOVE_FILES = "remove.files";  //删除附件
-    public static final String FAVORITE = "favorite.fastPass";  //关注快传（包含取消关注）
 
+    public static final String INITIATE_A_FAST_PASS = "sendFastPass"; //发起快传
+    public static final String ADD_RECEIVE_USER = "addReceiver";  //邀请参与人
+    public static final String UPDATE_FILES = "updateFiles";  //更新附件
+//    public static final String REMOVE_FILES = "remove.files";  //删除附件
+    public static final String FAVORITE = "favoriteFastPass";  //关注快传 （关注or取消关注）
 
-    public static final String TOPIC_EXCHANGE = "topic.exchange";
+    //交换机名称
+    public static final String TOPIC_EXCHANGE = "queueExchange";
     @Bean
     public Queue INITIATE_A_FAST_PASS() {
         return new Queue(INITIATE_A_FAST_PASS);
@@ -41,13 +42,13 @@ public class RabbitMqConfig {
         return new Queue(ADD_RECEIVE_USER);
     }
     @Bean
-    public Queue ADD_FILES() {
-        return new Queue(ADD_FILES);
+    public Queue UPDATE_FILES() {
+        return new Queue(UPDATE_FILES);
     }
-    @Bean
+    /*@Bean
     public Queue REMOVE_FILES() {
         return new Queue(REMOVE_FILES);
-    }
+    }*/
     @Bean
     public Queue FAVORITE() {
         return new Queue(FAVORITE);
@@ -70,20 +71,20 @@ public class RabbitMqConfig {
         return BindingBuilder.bind(ADD_RECEIVE_USER()).to(topicExchange()).with("kc.add.receiver.#");
     }
 
-    //绑定新增附件的队列
+    //绑定更新附件的队列
     @Bean
     public Binding topicBinding3() {
-        return BindingBuilder.bind(ADD_FILES()).to(topicExchange()).with("kc.add.files.#");
+        return BindingBuilder.bind(UPDATE_FILES()).to(topicExchange()).with("kc.update.files.#");
     }
-    //绑定删除附件的队列
+    /*//绑定删除附件的队列
     @Bean
     public Binding topicBinding4() {
         return BindingBuilder.bind(REMOVE_FILES()).to(topicExchange()).with("kc.remove.files.#");
-    }
-    //绑定关注快传的队列
+    }*/
+    //绑定关注快传的队列 （关注or取消关注）
     @Bean
     public Binding topicBinding5() {
-        return BindingBuilder.bind(FAVORITE()).to(topicExchange()).with("kc.favorite.#");
+        return BindingBuilder.bind(FAVORITE()).to(topicExchange()).with("kc.update.favorite.#");
     }
 
 

@@ -64,6 +64,22 @@
      AND isDelete = #{isDelete,jdbcType=BIT}
   </select>
 
+  <select id="selectBySessionid" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select
+    <include refid="Base_Column_List" />
+    from kc_info_box
+    where  sessionid = #{sessionid,jdbcType=VARCHAR}
+    AND staffNo != 0
+  </select>
+
+  <select id="selectReceiverUserByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from kc_info_box
+    where  sessionId = (SELECT sessionId FROM kc_info_box WHERE id = #{id,jdbcType=INTEGER} )
+    AND staffNo != 0
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
 
     delete from kc_info_box

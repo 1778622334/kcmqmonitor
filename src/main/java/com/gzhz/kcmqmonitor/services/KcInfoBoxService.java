@@ -1,8 +1,6 @@
 package com.gzhz.kcmqmonitor.services;
 
-import com.gzhz.kcmqmonitor.entity.KcInfoBox;
-import com.gzhz.kcmqmonitor.entity.KcSearchModel;
-import com.gzhz.kcmqmonitor.entity.KcSearchNewModel;
+import com.gzhz.kcmqmonitor.entity.*;
 import com.gzhz.kcmqmonitor.model.SearchInfoBoxModel;
 
 import java.util.List;
@@ -15,8 +13,12 @@ public interface KcInfoBoxService {
 
     int insertSelective(KcInfoBox record);
 
-
-    KcInfoBox selectByPrimaryKey(Integer id);
+    /**
+     * 主键id查找 kcInfoBox  后处理成需要的数据模型
+     * @param id
+     * @return
+     */
+    KcSearchNewModel selectByPrimaryKey(Integer id) throws Exception ;
 
 
     int updateByPrimaryKeySelective(KcInfoBox record);
@@ -31,4 +33,25 @@ public interface KcInfoBoxService {
      * @return
      */
     List<KcSearchNewModel>  selectByPublishTime(SearchInfoBoxModel searchInfoBoxModel);
+
+    /**
+     * 由主键id 查询接收人列表  处理结果集为新增接收人数据模型
+     * @param id
+     * @return
+     */
+    updateReceiverUserModel selectReceiverUserByPrimaryKey(Integer id);
+
+    /**
+     * 由主键id 查询附件列表  处理结果集为更新附件得数据模型
+     * @param id
+     * @return
+     */
+    UpdateFilesModel selectFilesById(Integer id);
+
+    /**
+     * 由主键id 查询关注该条快传的用户列表  处理结果集为更新关注列表的数据模型
+     * @param id
+     * @return
+     */
+    updateFavoritesModel selectFavoritesById(Integer id);
 }

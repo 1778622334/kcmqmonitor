@@ -14,12 +14,24 @@ spring:
       prefix: /
       suffix: .html
 
-  #配置MQ
+  #配置本地MQ
+#  rabbitmq:
+#      host: 127.0.0.1
+#      port: 5672
+#      username: guest
+#      password: guest
+#      publisher-confirm-type: correlated
+#      listener:
+#        direct:
+#          acknowledge-mode: manual
+
+  #测试服务器MQ
   rabbitmq:
-    host: 127.0.0.1
+#    host: 59.215.223.100
+    host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
 
 server:
   port: 9081

@@ -4,12 +4,21 @@ package com.gzhz.kcmqmonitor.entity;
  * 前端感知搜索传参封装类
  */
 public class SearchBlurryModel {
+    private Long userId;
     private String startTime;
     private String endTime;
     private String keyWord;
     private int[] findType;
     private int pageSize;
     private int currentPage;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 
     public String getStartTime() {
         return startTime;

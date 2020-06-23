@@ -3,6 +3,7 @@ package com.gzhz.kcmqmonitor.mq;
 import com.gzhz.kcmqmonitor.mq.Sender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -15,9 +16,9 @@ public class MqController {
      * 发起快传
      * @return
      */
-    @GetMapping("/sendFastPass")
-    public Object sendTopic() {
-        sender.sendFastPass();
+    @GetMapping("/sendFastPass/{id}")
+    public Object sendTopic(@PathVariable String id) {
+        sender.sendFastPass(id);
         return "sendFastPass ： ok";
     }
 
@@ -26,14 +27,19 @@ public class MqController {
         sender.addReceiverUser();
         return "addReceiverUser ： ok";
     }
-    @GetMapping("/addFiles")
-    public Object addFiles() {
-        sender.addFile();
-        return "addFiles : ok";
+    @GetMapping("/updateFile")
+    public Object updateFile() {
+        sender.updateFile();
+        return "updateFile : ok";
     }
     @GetMapping("/removeFiles")
     public Object removeFiles() {
-        sender.removeFiles();
+//        sender.removeFiles();
+        return "removeFiles : ok  暂时没有使用";
+    }
+    @GetMapping("/updateFavorites")
+    public Object updateFavorites() {
+        sender.updateFavorites();
         return "removeFiles : ok";
     }
 }

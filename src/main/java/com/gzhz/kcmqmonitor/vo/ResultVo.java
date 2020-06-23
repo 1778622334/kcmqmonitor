@@ -3,7 +3,6 @@ package com.gzhz.kcmqmonitor.vo;
 
 import com.gzhz.kcmqmonitor.utils.PageHelper;
 
-import java.io.Serializable;
 
 public class ResultVo {
     private int status;

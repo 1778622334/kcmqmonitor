@@ -1,10 +1,10 @@
 package com.gzhz.kcmqmonitor.entity;
 
-public class UpdateFilesModel {
+public class updateFavoritesModel {
     private String action;
     private String collection;
-//    private String id;
-    private Files[]  data;
+
+    private Favorites[]  data;
 
     public String getAction() {
         return action;
@@ -21,23 +21,12 @@ public class UpdateFilesModel {
     public void setCollection(String collection) {
         this.collection = collection;
     }
-//
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public void setId(String id) {
-//        this.id = id;
-//    }
 
-    public UpdateFilesModel() {
-    }
-
-    public Files[] getData() {
+    public Favorites[] getData() {
         return data;
     }
 
-    public void setData(Files[] data) {
+    public void setData(Favorites[] data) {
         this.data = data;
     }
 }
