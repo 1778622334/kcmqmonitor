@@ -8,7 +8,7 @@ public class SearchBlurryModel {
     private String startTime;
     private String endTime;
     private String keyWord;
-    private int[] findType;
+    private int[] findType;   // 1发起人 2接收人 3 主题 4附件名
     private int pageSize;
     private int currentPage;
 

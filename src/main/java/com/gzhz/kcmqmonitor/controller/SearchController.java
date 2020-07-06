@@ -192,8 +192,10 @@ public class SearchController {
     /**
      * 模糊搜索
      * @return
+     * z注解：@CrossOrigin  是为了解决跨越请求
      */
 
+    @CrossOrigin
     @RequestMapping("kc/search")
     public Map<String,Object> search(@RequestBody SearchBlurryModel model ){
         Map<String,Object> map = new HashMap<>();
@@ -216,12 +218,12 @@ public class SearchController {
         //设置返回的参数
 //        model.setReturnParam(new ReturnParam(new String[]{"id","title","info","receiverusers","receiveruserids","files","publishtime","publishuser","publishuserid","favorites","type"},10,0) );
 
-
 //        if(){
 //
 //        }
         map = searchService.search(model);
 //        PageHelper pageHelper = new PageHelper();
+//        map.put("str","chenggong");
         return map;
     }
 

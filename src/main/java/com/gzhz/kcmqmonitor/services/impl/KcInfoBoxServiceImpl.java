@@ -68,16 +68,16 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
             for (KcInfoBox infoBox : kcInfoBoxes) {
                 KcSearchNewModel searchModel = new KcSearchNewModel();
 
-                //通过 sessionId 查询出该条快传的附件列表
+                // 通过 sessionId 查询出该条快传的附件列表
                 List<KcAttList> attLists = kcAttListMapper.setlectBysessionIdAndGuid(infoBox.getSessionid());
-                //通过快传的 kid  查询出关注该条快传的用户
+                // 通过快传的 kid  查询出关注该条快传的用户
                 List<KcFavorites> favorites = kcFavoritesMapper.selectByKid(infoBox.getId());
-                //通过 sessionguid 查询出接收人列表
+                // 通过 sessionguid 查询出接收人列表
                 SearchStaffNoListModel staffNoModel = new SearchStaffNoListModel(infoBox.getPublishuser(),0L,
                         0,0, infoBox.getSessionguid(),(byte)0);
                 List<KcInfoBox> kcInfoBoxesStaffNo = kcInfoBoxMapper.selectStaffNoBysessionguid(staffNoModel);
 
-                //处理附件列表
+                // 处理附件列表
                 if(null != attLists && attLists.size() > 0){
                     String[] attArr = new String[attLists.size()] ;
                     for (int i = 0; i < attLists.size(); i++) {
@@ -89,7 +89,7 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                     attArr[0] = "";
                     searchModel.setFiles( attArr );
                 }
-                //处理关注人列表
+                // 处理关注人列表
 
                 if(null != favorites && favorites.size() > 0){
                     String[] favUserArr = new String[favorites.size()];
@@ -102,7 +102,7 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                     favUserArr[0] = ("");
                     searchModel.setFavorites( favUserArr );
                 }
-                //处理接收人列表
+                // 处理接收人列表
                 if(null != kcInfoBoxesStaffNo && kcInfoBoxesStaffNo.size() > 0){
                     String[] ids = new String[kcInfoBoxesStaffNo.size()] ;
                     List<Long> staffNoList = new ArrayList<>();
@@ -110,17 +110,17 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                         staffNoList.add(kcInfoBoxesStaffNo.get(i).getStaffno());
                         ids[i] = kcInfoBoxesStaffNo.get(i).getStaffno().toString();
                     }
-                    //设置接收人ids
+                    // 设置接收人ids
                     searchModel.setReceiveruserids(ids);
-                    //查询用户名
+                    // 查询用户名
                     List<DynStaffNo> nameList = dynMemberStaffMapper.setlectStaffNameByStaffNo(staffNoList);
                     if(null != nameList && nameList.size() > 0 ){
                         String[] names = new String[nameList.size()];
                         for (int i = 0; i < nameList.size(); i++){
                             names[i] = (nameList.get(i).getStaffname());
                         }
-                        //设置接收人的名字
-                        searchModel.setReceiverusers( names );
+                        // 设置接收人的名字
+                        searchModel.setReceiverusers(names);
                     }else {
                         String[] names = new String[1];
                         names[0] = ("");
@@ -137,15 +137,19 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
                     searchModel.setReceiverusers( names);
 
                 }
-                //处理发起人的名字
+                //处理发起人的信息 （名字和头像）
                 List<Long> publishStaffNo = new ArrayList<>();
                 publishStaffNo.add(infoBox.getPublishuser());
                 List<DynStaffNo> publishName = dynMemberStaffMapper.setlectStaffNameByStaffNo(publishStaffNo);
                 if(null != publishName && publishName.size() > 0 ){
                     searchModel.setPublishuser(publishName.get(0).getStaffname());
+                    searchModel.setHeadImageUrl(publishName.get(0).getHeadImageUrl());
                 }else {
-
                     searchModel.setPublishuser("");
+                    searchModel.setHeadImageUrl("");
+                }
+                if(null == searchModel.getHeadImageUrl()){
+                    searchModel.setHeadImageUrl("");
                 }
                 searchModel.setPublishuserid(infoBox.getPublishuser().toString());
                 //处理其他的数据
@@ -180,41 +184,46 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
         KcSearchNewModel searchModel = new KcSearchNewModel();
         try {
             KcInfoBox kcInfoBox = kcInfoBoxMapper.selectByPrimaryKey(id);
-            //查出接收人列表
+            // 查出接收人列表
             List<KcInfoBox> kcInfoBoxesStaffNo = kcInfoBoxMapper.selectBySessionid(kcInfoBox.getSessionid());
-            //查出附件列表
+            // 查出附件列表
             List<KcAttList> attLists = kcAttListMapper.setlectBysessionIdAndGuid(kcInfoBox.getSessionid());
-            //通过快传的 kid  查询出关注该条快传的用户
+            // 通过快传的 kid  查询出关注该条快传的用户
             List<KcFavorites> favorites = kcFavoritesMapper.selectByKid(kcInfoBox.getId());
 
-            //处理附件列表
+            // 处理附件列表
             String[] attArr = dealFileList(attLists);
             searchModel.setFiles( attArr);
-            //处理关注人列表
+            // 处理关注人列表
             String[] favUserArr = dealFavorites(favorites);
             searchModel.setFavorites( favUserArr );
-            //处理接收人列表
+            // 处理接收人列表
             Map<String,String[]> map = dealReceiverUserList(kcInfoBoxesStaffNo);
             searchModel.setReceiveruserids(map.get("ids"));
             searchModel.setReceiverusers( map.get("names"));
-            //处理发起人的名字
+            // 处理发起人的信息（包含名字和头像地址）
             List<Long> publishStaffNo = new ArrayList<>();
             publishStaffNo.add(kcInfoBox.getPublishuser());
             List<DynStaffNo> publishName = dynMemberStaffMapper.setlectStaffNameByStaffNo(publishStaffNo);
             if(null != publishName && publishName.size() > 0 ){
                 searchModel.setPublishuser(publishName.get(0).getStaffname());
+                searchModel.setHeadImageUrl(publishName.get(0).getHeadImageUrl());
             }else {
+                searchModel.setHeadImageUrl("");
                 searchModel.setPublishuser("");
             }
-            //发起人的id
+            if(null == searchModel.getHeadImageUrl()){
+                searchModel.setHeadImageUrl("");
+            }
+            // 发起人的id
             searchModel.setPublishuserid(kcInfoBox.getPublishuser().toString());
-            //处理其他的数据
+            // 处理其他的数据
             searchModel.setId(kcInfoBox.getId().toString());
             searchModel.setTitle(kcInfoBox.getTitle());
             searchModel.setInfo(kcInfoBox.getContent());
-            //模型中type 1表示正常发出， 4已删除的  8草稿箱的  在数据库中用state字段表示
+            // 模型中type 1表示正常发出， 4已删除的  8草稿箱的  在数据库中用state字段表示
             searchModel.setType(kcInfoBox.getState().byteValue());
-            //处理publishTime格式
+            // 处理publishTime格式
             String s = kcInfoBox.getPublishtime().toString();
             String publishTime = DateTimeUtils.timeStamp2Date(s,DateTimeUtils.TIME_FORMAT);
             String publishTimeStr = SelfStringUtils.blankToSpecific(publishTime,"T");
@@ -399,7 +408,24 @@ public class KcInfoBoxServiceImpl implements KcInfoBoxService {
     }
 
 
+    public UpdateStateModel selectStateById(Integer id) throws Exception{
+        try {
+            KcInfoBox kcInfoBox = kcInfoBoxMapper.selectByPrimaryKey(id);
+            UpdateStateModel model = new UpdateStateModel();
+            model.setAction("UPDATE");
+            model.setCollection("gz_kc");
+            KcState kcState = new KcState();
+            kcState.setId(kcInfoBox.getId().toString());
+            kcState.setType(kcInfoBox.getState());
 
+            model.setData(new KcState[]{kcState});
+            return model;
+        }catch (Exception e){
+            e.printStackTrace();
+
+        }
+        return null;
+    }
 
 
 }

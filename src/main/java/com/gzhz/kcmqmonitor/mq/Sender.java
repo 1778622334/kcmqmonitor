@@ -22,10 +22,6 @@ public class Sender {
     @Autowired
     private AmqpTemplate amqpTemplate;
 
-
-
-
-
     /**
      * 发起快传
      */
@@ -89,6 +85,27 @@ public class Sender {
         this.amqpTemplate.convertAndSend(RabbitMqConfig.TOPIC_EXCHANGE, "kc.update.favorite", id );
         log.info("【updateFavorites 已发送消息】" + id );
     }
+
+    //  彻底删除快传
+    public void deleteFastPass(){
+        String id = "241847";
+        // 第一个参数：TopicExchange名字
+        // 第二个参数：Route-Key
+        // 第三个参数：要发送的内容
+        this.amqpTemplate.convertAndSend(RabbitMqConfig.TOPIC_EXCHANGE, "kc.delete", id );
+        log.info("【deleteFastPass 已发送消息】" + id );
+    }
+
+    //  逻辑上删除快传
+    public void updateFastPassState(){
+        String id = "241847";
+        // 第一个参数：TopicExchange名字
+        // 第二个参数：Route-Key
+        // 第三个参数：要发送的内容
+        this.amqpTemplate.convertAndSend(RabbitMqConfig.TOPIC_EXCHANGE, "kc.update.state", id );
+        log.info("【updateFastPassState 已发送消息】" + id );
+    }
+
 
 //        KcSearchNewModel model = new KcSearchNewModel();
 //        model.setId("123213213132");

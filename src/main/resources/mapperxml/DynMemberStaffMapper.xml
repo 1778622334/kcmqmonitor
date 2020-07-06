@@ -45,6 +45,7 @@
     <!--<result column="guid" property="guid" jdbcType="VARCHAR" />-->
     <result column="username" property="username" jdbcType="VARCHAR" />
     <result column="staffName" property="staffname" jdbcType="VARCHAR" />
+    <result column="headImageUrl" property="headImageUrl" jdbcType="VARCHAR" />
 
   </resultMap>
   <resultMap id="ResultMapWithBLOBs" type="com.gzhz.kcmqmonitor.entity.DynMemberStaff" extends="BaseResultMap" >
@@ -55,7 +56,7 @@
 
   <select id="setlectStaffNameByStaffNo" resultMap="staffNameResultMap" parameterType="list" >
 
-    select staffNo, username, staffName
+    select staffNo, username, staffName, headImageUrl
     from dyn_member_staff
     <where>
       staffNo in

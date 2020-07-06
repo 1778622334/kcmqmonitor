@@ -8,6 +8,7 @@ spring:
     username: mh_dev
     password: mh_dev12345
     url: jdbc:mysql://localhost:3308/mh_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT
+#    url: jdbc:mysql://59.215.222.175:3306/mh_dev?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT
     driver-class-name: com.mysql.jdbc.Driver
   mvc:
     view:
@@ -34,7 +35,8 @@ spring:
     password: admin
 
 server:
-  port: 9081
+  port: 8080
+#  port: 9081
 
 search:
   client:
@@ -43,7 +45,9 @@ search:
     port1: 9091
     url: http://59.215.190.43
 
-
+#logging
+logging:
+  config: classpath:log/logback.xml
 
 
 

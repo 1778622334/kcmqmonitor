@@ -42,4 +42,15 @@ public class MqController {
         sender.updateFavorites();
         return "removeFiles : ok";
     }
+    @GetMapping("/deleteFastPass")
+    public Object deleteFastPass() {
+        sender.deleteFastPass();
+        return "deleteFastPass 彻底删除快传 : ok";
+    }
+
+    @GetMapping("/updateFastPassState")
+    public Object updateFastPassState() {
+        sender.updateFastPassState();
+        return "updateFastPassState 逻辑上删除快传 : ok";
+    }
 }

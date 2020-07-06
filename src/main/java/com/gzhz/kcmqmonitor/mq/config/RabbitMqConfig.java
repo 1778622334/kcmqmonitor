@@ -30,6 +30,8 @@ public class RabbitMqConfig {
     public static final String UPDATE_FILES = "updateFiles";  //更新附件
 //    public static final String REMOVE_FILES = "remove.files";  //删除附件
     public static final String FAVORITE = "favoriteFastPass";  //关注快传 （关注or取消关注）
+    public static final String DELETE_FAST_PASS = "deleteKC"; // 彻底删除快传
+    public static final String UPDATE_FAST_PASS_STATE = "updateFastPassState"; // 更新快传的state字段
 
     //交换机名称
     public static final String TOPIC_EXCHANGE = "queueExchange";
@@ -45,13 +47,21 @@ public class RabbitMqConfig {
     public Queue UPDATE_FILES() {
         return new Queue(UPDATE_FILES);
     }
-    /*@Bean
-    public Queue REMOVE_FILES() {
-        return new Queue(REMOVE_FILES);
-    }*/
+//    @Bean
+//    public Queue REMOVE_FILES() {
+//        return new Queue(REMOVE_FILES);
+//    }
     @Bean
     public Queue FAVORITE() {
         return new Queue(FAVORITE);
+    }
+    @Bean
+    public Queue DELETE_FAST_PASS() {
+        return new Queue(DELETE_FAST_PASS);
+    }
+    @Bean
+    public Queue UPDATE_FAST_PASS_STATE() {
+        return new Queue(UPDATE_FAST_PASS_STATE);
     }
 
     //交换机 一个应该够用了
@@ -76,16 +86,25 @@ public class RabbitMqConfig {
     public Binding topicBinding3() {
         return BindingBuilder.bind(UPDATE_FILES()).to(topicExchange()).with("kc.update.files.#");
     }
-    /*//绑定删除附件的队列
-    @Bean
-    public Binding topicBinding4() {
-        return BindingBuilder.bind(REMOVE_FILES()).to(topicExchange()).with("kc.remove.files.#");
-    }*/
+    //绑定删除附件的队列
+//    @Bean
+//    public Binding topicBinding4() {
+//        return BindingBuilder.bind(REMOVE_FILES()).to(topicExchange()).with("kc.remove.files.#");
+//    }
     //绑定关注快传的队列 （关注or取消关注）
     @Bean
     public Binding topicBinding5() {
         return BindingBuilder.bind(FAVORITE()).to(topicExchange()).with("kc.update.favorite.#");
     }
-
+    // 彻底删除
+    @Bean
+    public Binding topicBinding6() {
+        return BindingBuilder.bind(DELETE_FAST_PASS()).to(topicExchange()).with("kc.delete.#");
+    }
+    // 更新快传的state字段
+    @Bean
+    public Binding topicBinding7() {
+        return BindingBuilder.bind(UPDATE_FAST_PASS_STATE()).to(topicExchange()).with("kc.update.state.#");
+    }
 
 }

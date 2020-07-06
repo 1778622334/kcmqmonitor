@@ -1,8 +1,6 @@
 package com.gzhz.kcmqmonitor.utils;
 
-import com.sun.deploy.net.HttpResponse;
 import net.sf.json.JSONObject;
-import sun.net.www.http.HttpClient;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -6,6 +6,8 @@ package com.gzhz.kcmqmonitor.entity;
  * create by xujy on 2020-06-17
  */
 public class HighLightParam {
+//    private String endTag = "";
+//    private String startTag = "";
     private String endTag = "</em>";
     private String startTag = "<em>";
     private String[] field;

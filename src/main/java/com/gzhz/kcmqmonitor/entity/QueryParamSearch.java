@@ -3,6 +3,7 @@ package com.gzhz.kcmqmonitor.entity;
 public class QueryParamSearch {
     private String query;
     private String[] filterQuery;
+    private String[] sortField;
 
 //    "queryParam": {
 //        "query": "测试",
@@ -27,5 +28,13 @@ public class QueryParamSearch {
 
     public void setFilterQuery(String[] filterQuery) {
         this.filterQuery = filterQuery;
+    }
+
+    public String[] getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String[] sortField) {
+        this.sortField = sortField;
     }
 }
